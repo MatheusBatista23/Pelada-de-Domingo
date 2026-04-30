@@ -10,7 +10,6 @@
             --bg-body: #1e252b;
             --bg-card: #2d3640;
             --primary: #22c55e;
-            --primary-hover: #1aa14b;
             --danger: #ef4444;
             --text-main: #ffffff;
             --text-muted: #a0aec0;
@@ -24,13 +23,11 @@
             background: var(--bg-body);
             color: var(--text-main);
             padding: 20px 15px;
-            line-height: 1.5;
         }
 
         .container { max-width: 450px; margin: auto; }
 
         header { text-align: center; margin-bottom: 25px; }
-        header h1 { font-size: 1.5rem; display: flex; align-items: center; justify-content: center; gap: 10px; }
 
         .card {
             background: var(--bg-card);
@@ -60,10 +57,28 @@
             color: white;
             font-size: 16px;
             margin-bottom: 15px;
-            transition: border 0.3s;
         }
 
-        input:focus { border-color: var(--primary); outline: none; }
+        /* Estilo para a Flag de Habilidade */
+        .skill-toggle {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 15px;
+            background: #1e252b;
+            padding: 10px;
+            border-radius: 8px;
+            border: 1px solid var(--border);
+        }
+
+        .skill-toggle input[type="checkbox"] {
+            width: 20px;
+            height: 20px;
+            margin: 0;
+            cursor: pointer;
+        }
+
+        .skill-toggle span { font-size: 0.9rem; color: var(--text-main); }
 
         .grid-inputs { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
 
@@ -73,16 +88,9 @@
             border-radius: 8px;
             border: none;
             font-weight: 600;
-            font-size: 1rem;
             cursor: pointer;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 8px;
-            transition: transform 0.1s, opacity 0.2s;
+            transition: opacity 0.2s;
         }
-
-        button:active { transform: scale(0.98); }
 
         .btn-add { background: var(--primary); color: white; }
         .btn-sortear { background: var(--primary); color: white; margin-bottom: 10px; }
@@ -91,7 +99,6 @@
 
         .action-row { display: grid; grid-template-columns: 1.5fr 1fr; gap: 10px; margin-bottom: 10px; }
 
-        /* Lista de Jogadores Estilizada */
         .lista-container { max-height: 300px; overflow-y: auto; }
         .jogador-item {
             background: #1e252b;
@@ -103,13 +110,9 @@
             align-items: center;
             border-left: 4px solid var(--primary);
         }
-        .jogador-info span { color: var(--text-muted); font-size: 0.8rem; }
-        .btn-del { 
-            background: none; border: none; color: var(--danger); 
-            width: auto; padding: 5px; font-size: 1.2rem;
-        }
 
-        /* Times Gerados */
+        .btn-del { background: none; color: var(--danger); width: auto; font-size: 1.2rem; }
+
         .time-box {
             background: #1e252b;
             padding: 15px;
@@ -117,14 +120,7 @@
             margin-top: 15px;
             border: 1px solid var(--border);
         }
-        .time-box h3 { 
-            font-size: 1rem; color: var(--primary); 
-            border-bottom: 1px solid var(--border); 
-            margin-bottom: 10px; padding-bottom: 5px;
-        }
-        .time-box p { font-size: 0.95rem; margin-bottom: 4px; }
 
-        /* Modal */
         .modal {
             display: none; position: fixed; top:0; left:0; width:100%; height:100%;
             background: rgba(0,0,0,0.85); z-index: 100;
@@ -134,8 +130,7 @@
             width: 90%; max-width: 400px; border-radius: 15px;
         }
         textarea {
-            width: 100%; height: 200px; background: #1e252b; border: 1px solid var(--border);
-            color: white; border-radius: 8px; padding: 10px; margin: 15px 0; font-family: monospace;
+            width: 100%; height: 200px; background: #1e252b; color: white; border-radius: 8px; padding: 10px; margin: 15px 0;
         }
     </style>
 </head>
@@ -146,20 +141,28 @@
         <h1>⚽ Montador de Times</h1>
     </header>
 
-    <!-- CARD CADASTRO -->
     <div class="card">
         <p class="card-title">Adicionar Jogador</p>
         <input type="text" id="nome" placeholder="Nome do Jogador">
-        <label>Nível de Habilidade</label>
-        <select id="nivel">
-            <option value="1">⭐ Nível 1</option>
-            <option value="2">⭐⭐ Nível 2</option>
-            <option value="3">⭐⭐⭐ Nível 3</option>
-        </select>
-        <button class="btn-add" onclick="addJogador()">Adicionar Jogador <span>+</span></button>
+        
+        <!-- FLAG DE HABILIDADE -->
+        <label class="skill-toggle">
+            <input type="checkbox" id="usarNivel" onchange="toggleNivelSelect()">
+            <span>Definir nível de habilidade?</span>
+        </label>
+
+        <div id="campoNivel" style="display: none;">
+            <label>Nível</label>
+            <select id="nivel">
+                <option value="1">⭐ Nível 1</option>
+                <option value="2">⭐⭐ Nível 2</option>
+                <option value="3">⭐⭐⭐ Nível 3</option>
+            </select>
+        </div>
+
+        <button class="btn-add" onclick="addJogador()">Adicionar Jogador</button>
     </div>
 
-    <!-- CARD CONFIG E SORTEIO -->
     <div class="card">
         <p class="card-title">Configurar Sorteio</p>
         <div class="grid-inputs">
@@ -172,37 +175,29 @@
                 <input type="number" id="porTime" value="5">
             </div>
         </div>
-        
         <div class="action-row">
             <button class="btn-sortear" onclick="sortear()">🎲 Sortear</button>
             <button class="btn-danger" onclick="limparJogadores()">🗑️ Limpar</button>
         </div>
-        <button class="btn-secondary" onclick="gerarTexto()">📋 Gerar Texto para WhatsApp</button>
+        <button class="btn-secondary" onclick="gerarTexto()">📋 Gerar Texto</button>
     </div>
 
-    <!-- LISTA DE JOGADORES -->
     <div class="card">
-        <p class="card-title">Jogadores Cadastrados (<span id="totalJogadores">0</span>)</p>
-        <div id="listaJogadores" class="lista-container">
-            <!-- Items via JS -->
-        </div>
+        <p class="card-title">Jogadores (<span id="totalJogadores">0</span>)</p>
+        <div id="listaJogadores" class="lista-container"></div>
     </div>
 
-    <!-- RESULTADO DOS TIMES -->
     <div class="card">
         <p class="card-title">Times Formados</p>
-        <div id="times">
-            <p style="color: var(--text-muted); text-align: center; font-size: 0.9rem;">Os times aparecerão aqui após o sorteio.</p>
-        </div>
+        <div id="times"></div>
     </div>
 </div>
 
-<!-- MODAL -->
 <div id="modal" class="modal">
     <div class="modal-content">
-        <h3 style="color: var(--primary)">Lista para Copiar</h3>
+        <h3>Lista para Copiar</h3>
         <textarea id="textoTimes" readonly></textarea>
-        <button class="btn-add" onclick="copiarTexto()">Copiar Texto</button>
+        <button class="btn-add" onclick="copiarTexto()">Copiar</button>
         <button class="btn-secondary" onclick="fecharModal()">Fechar</button>
     </div>
 </div>
@@ -210,6 +205,13 @@
 <script>
     let jogadores = [];
     let ultimoSorteio = [];
+
+    // Mostrar/Esconder seletor de nível
+    function toggleNivelSelect() {
+        const checkbox = document.getElementById("usarNivel");
+        const campo = document.getElementById("campoNivel");
+        campo.style.display = checkbox.checked ? "block" : "none";
+    }
 
     function salvarJogadores() {
         localStorage.setItem("jogadores", JSON.stringify(jogadores));
@@ -224,14 +226,19 @@
     function addJogador() {
         const nomeInput = document.getElementById("nome");
         const nome = nomeInput.value.trim();
-        const nivel = parseInt(document.getElementById("nivel").value);
+        const usarNivel = document.getElementById("usarNivel").checked;
+        
+        // Se a flag estiver desmarcada, o nível padrão é 1
+        const nivel = usarNivel ? parseInt(document.getElementById("nivel").value) : 1;
 
-        if (!nome) return alert("Por favor, digite o nome do jogador.");
+        if (!nome) return alert("Digite o nome.");
 
-        jogadores.push({ nome, nivel });
+        jogadores.push({ nome, nivel, nivelDefinido: usarNivel });
         salvarJogadores();
+        
         nomeInput.value = "";
-        nomeInput.focus();
+        document.getElementById("usarNivel").checked = false;
+        toggleNivelSelect();
         renderJogadores();
     }
 
@@ -242,11 +249,11 @@
     }
 
     function limparJogadores() {
-        if (!confirm("Tem certeza que deseja apagar todos os jogadores?")) return;
+        if (!confirm("Apagar tudo?")) return;
         jogadores = [];
         salvarJogadores();
         renderJogadores();
-        document.getElementById("times").innerHTML = '<p style="color: var(--text-muted); text-align: center; font-size: 0.9rem;">Os times aparecerão aqui após o sorteio.</p>';
+        document.getElementById("times").innerHTML = '';
     }
 
     function renderJogadores() {
@@ -254,24 +261,25 @@
         lista.innerHTML = "";
 
         jogadores.forEach((j, i) => {
+            const labelNivel = j.nivelDefinido ? `Nível ${j.nivel}` : "Nível não definido";
             lista.innerHTML += `
                 <div class="jogador-item">
-                    <div class="jogador-info">
+                    <div>
                         <strong>${j.nome}</strong><br>
-                        <span>Nível ${j.nivel}</span>
+                        <span style="color: var(--text-muted); font-size: 0.8rem;">${labelNivel}</span>
                     </div>
                     <button class="btn-del" onclick="remover(${i})">✕</button>
                 </div>
             `;
         });
-
         document.getElementById("totalJogadores").innerText = jogadores.length;
     }
 
     function sortear() {
-        if (jogadores.length === 0) return alert("Adicione jogadores primeiro!");
-        
+        if (jogadores.length === 0) return alert("Adicione jogadores!");
         const numTimes = parseInt(document.getElementById("numTimes").value);
+        
+        // Embaralha e depois ordena pelo nível (quem não tem nível definido fica como 1)
         let lista = [...jogadores].sort(() => Math.random() - 0.5).sort((a, b) => b.nivel - a.nivel);
         let times = Array.from({ length: numTimes }, () => []);
 
@@ -290,11 +298,10 @@
     function renderTimes(times) {
         const div = document.getElementById("times");
         div.innerHTML = "";
-
         times.forEach((t, i) => {
             div.innerHTML += `
                 <div class="time-box">
-                    <h3>Time ${i + 1}</h3>
+                    <h3 style="color: var(--primary)">Time ${i + 1}</h3>
                     ${t.map(j => `<p>• ${j.nome}</p>`).join("")}
                 </div>
             `;
@@ -302,15 +309,13 @@
     }
 
     function gerarTexto() {
-        if (!ultimoSorteio.length) return alert("Sorteie os times primeiro!");
-
-        let txt = "⚽ *EQUIPES FORMADAS* ⚽\n\n";
+        if (!ultimoSorteio.length) return alert("Sorteie primeiro!");
+        let txt = "⚽ *TIMES DO RACHA* ⚽\n\n";
         ultimoSorteio.forEach((t, i) => {
             txt += `*TIME ${i + 1}*\n`;
             t.forEach(j => txt += `• ${j.nome}\n`);
             txt += "\n";
         });
-
         document.getElementById("textoTimes").value = txt;
         document.getElementById("modal").style.display = "block";
     }
@@ -319,7 +324,7 @@
         const area = document.getElementById("textoTimes");
         area.select();
         document.execCommand("copy");
-        alert("Texto copiado para a área de transferência!");
+        alert("Copiado!");
     }
 
     function fecharModal() {
