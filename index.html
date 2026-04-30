@@ -59,7 +59,6 @@
             margin-bottom: 15px;
         }
 
-        /* Estilo para a Flag de Habilidade */
         .skill-toggle {
             display: flex;
             align-items: center;
@@ -69,6 +68,7 @@
             padding: 10px;
             border-radius: 8px;
             border: 1px solid var(--border);
+            cursor: pointer;
         }
 
         .skill-toggle input[type="checkbox"] {
@@ -90,14 +90,24 @@
             font-weight: 600;
             cursor: pointer;
             transition: opacity 0.2s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
         }
 
         .btn-add { background: var(--primary); color: white; }
-        .btn-sortear { background: var(--primary); color: white; margin-bottom: 10px; }
+        .btn-sortear { background: var(--primary); color: white; }
         .btn-danger { background: var(--danger); color: white; }
         .btn-secondary { background: #4a5568; color: white; margin-top: 10px; }
 
-        .action-row { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 10px; }
+        /* AJUSTE AQUI: Proporção igual 1fr e 1fr para os botões */
+        .action-row { 
+            display: grid; 
+            grid-template-columns: 1fr 1fr; 
+            gap: 10px; 
+            margin-bottom: 10px; 
+        }
 
         .lista-container { max-height: 300px; overflow-y: auto; }
         .jogador-item {
@@ -111,7 +121,7 @@
             border-left: 4px solid var(--primary);
         }
 
-        .btn-del { background: none; color: var(--danger); width: auto; font-size: 1.2rem; }
+        .btn-del { background: none; color: var(--danger); width: auto; font-size: 1.2rem; padding: 5px; }
 
         .time-box {
             background: #1e252b;
@@ -130,7 +140,7 @@
             width: 90%; max-width: 400px; border-radius: 15px;
         }
         textarea {
-            width: 100%; height: 200px; background: #1e252b; color: white; border-radius: 8px; padding: 10px; margin: 15px 0;
+            width: 100%; height: 200px; background: #1e252b; color: white; border-radius: 8px; padding: 10px; margin: 15px 0; border: 1px solid var(--border); font-family: sans-serif;
         }
     </style>
 </head>
@@ -145,7 +155,6 @@
         <p class="card-title">Adicionar Jogador</p>
         <input type="text" id="nome" placeholder="Nome do Jogador">
         
-        <!-- FLAG DE HABILIDADE -->
         <label class="skill-toggle">
             <input type="checkbox" id="usarNivel" onchange="toggleNivelSelect()">
             <span>Definir nível de habilidade?</span>
@@ -195,7 +204,7 @@
 
 <div id="modal" class="modal">
     <div class="modal-content">
-        <h3>Lista para Copiar</h3>
+        <h3 style="color: var(--primary)">Lista para Copiar</h3>
         <textarea id="textoTimes" readonly></textarea>
         <button class="btn-add" onclick="copiarTexto()">Copiar</button>
         <button class="btn-secondary" onclick="fecharModal()">Fechar</button>
@@ -206,7 +215,6 @@
     let jogadores = [];
     let ultimoSorteio = [];
 
-    // Mostrar/Esconder seletor de nível
     function toggleNivelSelect() {
         const checkbox = document.getElementById("usarNivel");
         const campo = document.getElementById("campoNivel");
@@ -227,8 +235,6 @@
         const nomeInput = document.getElementById("nome");
         const nome = nomeInput.value.trim();
         const usarNivel = document.getElementById("usarNivel").checked;
-        
-        // Se a flag estiver desmarcada, o nível padrão é 1
         const nivel = usarNivel ? parseInt(document.getElementById("nivel").value) : 1;
 
         if (!nome) return alert("Digite o nome.");
@@ -279,7 +285,6 @@
         if (jogadores.length === 0) return alert("Adicione jogadores!");
         const numTimes = parseInt(document.getElementById("numTimes").value);
         
-        // Embaralha e depois ordena pelo nível (quem não tem nível definido fica como 1)
         let lista = [...jogadores].sort(() => Math.random() - 0.5).sort((a, b) => b.nivel - a.nivel);
         let times = Array.from({ length: numTimes }, () => []);
 
