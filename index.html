@@ -126,7 +126,21 @@
 <script>
 let jogadores = [];
 
-// ADICIONAR
+// ===== LOCAL STORAGE =====
+function salvarJogadores() {
+  localStorage.setItem("jogadores", JSON.stringify(jogadores));
+}
+
+function carregarJogadores() {
+  const dados = localStorage.getItem("jogadores");
+
+  if (dados) {
+    jogadores = JSON.parse(dados);
+    renderJogadores();
+  }
+}
+
+// ===== ADICIONAR =====
 function addJogador() {
   const nome = document.getElementById("nome").value.trim();
   const nivel = parseInt(document.getElementById("nivel").value);
@@ -137,27 +151,31 @@ function addJogador() {
   }
 
   jogadores.push({ nome, nivel });
+  salvarJogadores();
 
   document.getElementById("nome").value = "";
   renderJogadores();
 }
 
-// REMOVER
+// ===== REMOVER =====
 function remover(index) {
   jogadores.splice(index, 1);
+  salvarJogadores();
   renderJogadores();
 }
 
-// LIMPAR TODOS
+// ===== LIMPAR TODOS =====
 function limparJogadores() {
   if (!confirm("Tem certeza que deseja apagar todos os jogadores?")) return;
 
   jogadores = [];
+  salvarJogadores();
+
   renderJogadores();
   document.getElementById("times").innerHTML = "";
 }
 
-// RENDER LISTA
+// ===== RENDER LISTA =====
 function renderJogadores() {
   const lista = document.getElementById("listaJogadores");
   const total = document.getElementById("totalJogadores");
@@ -176,7 +194,7 @@ function renderJogadores() {
   total.innerText = jogadores.length;
 }
 
-// SORTEIO BALANCEADO
+// ===== SORTEIO BALANCEADO =====
 function sortear() {
   const numTimes = parseInt(document.getElementById("numTimes").value);
   const porTime = parseInt(document.getElementById("porTime").value);
@@ -186,9 +204,7 @@ function sortear() {
     return;
   }
 
-  // Ordena por nível (maior primeiro)
   let lista = [...jogadores].sort((a, b) => b.nivel - a.nivel);
-
   let times = Array.from({ length: numTimes }, () => []);
 
   let index = 0;
@@ -211,7 +227,7 @@ function sortear() {
   renderTimes(times);
 }
 
-// RENDER TIMES
+// ===== RENDER TIMES =====
 function renderTimes(times) {
   const div = document.getElementById("times");
   div.innerHTML = "";
@@ -227,6 +243,9 @@ function renderTimes(times) {
     `;
   });
 }
+
+// ===== INICIAR =====
+carregarJogadores();
 </script>
 
 </body>
