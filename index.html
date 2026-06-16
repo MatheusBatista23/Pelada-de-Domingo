@@ -3,360 +3,162 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Montador de Times Pro</title>
+    <title>Se Sair Acaba FC - Montador de Times</title>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
     <style>
         :root {
-            --bg-body: #1e252b;
-            --bg-card: #2d3640;
-            --primary: #22c55e;
+            --bg-body: #000000;
+            --bg-card: #1a1a1a;
+            --primary: #ffcd00;
             --danger: #ef4444;
             --info: #3b82f6;
             --text-main: #ffffff;
             --text-muted: #a0aec0;
-            --border: #3f4a56;
+            --border: #333333;
         }
 
         * { box-sizing: border-box; margin: 0; padding: 0; }
 
-        body {
-            font-family: 'Poppins', sans-serif;
-            background: var(--bg-body);
-            color: var(--text-main);
-            padding: 20px 15px;
-        }
-
+        body { font-family: 'Poppins', sans-serif; background: var(--bg-body); color: var(--text-main); padding: 20px 15px; }
         .container { max-width: 450px; margin: auto; }
-
         header { text-align: center; margin-bottom: 25px; }
 
-        .card {
-            background: var(--bg-card);
-            border-radius: 12px;
-            padding: 20px;
-            margin-bottom: 20px;
-            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        .logo { 
+            width: 150px; height: 150px; border-radius: 50%; border: 3px solid var(--primary); 
+            margin-bottom: 15px; object-fit: contain; background-color: #000; 
         }
 
-        .card-title {
-            font-size: 0.8rem;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-            color: var(--text-muted);
-            margin-bottom: 15px;
-            font-weight: 600;
-        }
-
-        label { display: block; font-size: 0.9rem; margin-bottom: 5px; color: var(--text-muted); }
-
-        input, select, textarea {
-            width: 100%;
-            padding: 12px;
-            background: #1e252b;
-            border: 1px solid var(--border);
-            border-radius: 8px;
-            color: white;
-            font-size: 16px;
-            margin-bottom: 15px;
-        }
-
-        .skill-toggle {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            margin-bottom: 15px;
-            background: #1e252b;
-            padding: 10px;
-            border-radius: 8px;
-            border: 1px solid var(--border);
-            cursor: pointer;
-        }
-
-        .skill-toggle input { width: 20px; height: 20px; cursor: pointer; margin: 0; }
-
-        .grid-inputs { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
-
-        button {
-            width: 100%;
-            padding: 14px;
-            border-radius: 8px;
-            border: none;
-            font-weight: 600;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 8px;
-            transition: opacity 0.2s;
-        }
-
-        .btn-add { background: var(--primary); color: white; margin-bottom: 10px; }
-        .btn-import { background: var(--info); color: white; }
-        .btn-sortear { background: var(--primary); color: white; }
+        .card { background: var(--bg-card); border-radius: 12px; padding: 20px; margin-bottom: 20px; border: 1px solid var(--border); }
+        .card-title { font-size: 0.8rem; text-transform: uppercase; letter-spacing: 1px; color: var(--primary); margin-bottom: 15px; font-weight: 600; }
+        
+        input, select, textarea { width: 100%; padding: 12px; background: #000; border: 1px solid var(--border); border-radius: 8px; color: white; font-size: 16px; margin-bottom: 15px; }
+        .skill-toggle { display: flex; align-items: center; gap: 10px; margin-bottom: 15px; background: #000; padding: 10px; border-radius: 8px; border: 1px solid var(--border); cursor: pointer; }
+        
+        button { width: 100%; padding: 14px; border-radius: 8px; border: none; font-weight: 600; cursor: pointer; transition: 0.2s; background: var(--primary); color: #000; }
+        button:hover { opacity: 0.9; }
+        .btn-import { background: var(--info); color: white; margin-top: 5px; }
         .btn-danger { background: var(--danger); color: white; }
-        .btn-secondary { background: #4a5568; color: white; margin-top: 10px; }
-
+        .btn-secondary { background: #444; color: white; margin-top: 10px; }
         .action-row { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 10px; }
 
         .lista-container { max-height: 300px; overflow-y: auto; }
-        .jogador-item {
-            background: #1e252b;
-            padding: 10px 15px;
-            border-radius: 8px;
-            margin-bottom: 8px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            border-left: 4px solid var(--primary);
-        }
-
+        .jogador-item { background: #000; padding: 10px 15px; border-radius: 8px; margin-bottom: 8px; display: flex; justify-content: space-between; align-items: center; border-left: 4px solid var(--primary); }
         .btn-del { background: none; color: var(--danger); width: auto; font-size: 1.2rem; }
-
-        .time-box {
-            background: #1e252b;
-            padding: 15px;
-            border-radius: 8px;
-            margin-top: 15px;
-            border: 1px solid var(--border);
-        }
-
-        .modal {
-            display: none; position: fixed; top:0; left:0; width:100%; height:100%;
-            background: rgba(0,0,0,0.85); z-index: 100;
-        }
-        .modal-content {
-            background: var(--bg-card); margin: 10% auto; padding: 25px;
-            width: 90%; max-width: 400px; border-radius: 15px;
-        }
+        .time-box { background: #000; padding: 15px; border-radius: 8px; margin-top: 15px; border: 1px solid var(--primary); }
+        .modal { display: none; position: fixed; top:0; left:0; width:100%; height:100%; background: rgba(0,0,0,0.9); z-index: 100; }
+        .modal-content { background: var(--bg-card); margin: 10% auto; padding: 25px; width: 90%; max-width: 400px; border-radius: 15px; border: 1px solid var(--primary); }
     </style>
 </head>
 <body>
 
 <div class="container">
     <header>
-        <h1>⚽ Montador de Times</h1>
+        <img src="logo.png" alt="Logo Se Sair Acaba FC" class="logo">
+        <h1>Se Sair Acaba FC</h1>
     </header>
 
-    <!-- CADASTRO -->
     <div class="card">
         <p class="card-title">Adicionar Jogadores</p>
         <input type="text" id="nome" placeholder="Nome do Jogador">
-        
         <label class="skill-toggle">
             <input type="checkbox" id="usarNivel" onchange="toggleNivelSelect()">
             <span>Definir nível de habilidade?</span>
         </label>
-
         <div id="campoNivel" style="display: none;">
             <label>Nível</label>
-            <select id="nivel">
-                <option value="1">⭐ Nível 1</option>
-                <option value="2">⭐⭐ Nível 2</option>
-                <option value="3">⭐⭐⭐ Nível 3</option>
-            </select>
+            <select id="nivel"><option value="1">⭐ Nível 1</option><option value="2">⭐⭐ Nível 2</option><option value="3">⭐⭐⭐ Nível 3</option></select>
         </div>
-
-        <button class="btn-add" onclick="addJogador()">Adicionar Manual</button>
+        <button onclick="addJogador()">Adicionar Manual</button>
         <button class="btn-import" onclick="abrirModalImport()">📥 Importar Lista WhatsApp</button>
     </div>
 
-    <!-- CONFIG -->
     <div class="card">
         <p class="card-title">Configurar Sorteio</p>
-        <div class="grid-inputs">
-            <div>
-                <label>Qtd. Times</label>
-                <input type="number" id="numTimes" value="2">
-            </div>
-            <div>
-                <label>Jog. por Time</label>
-                <input type="number" id="porTime" value="5">
-            </div>
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
+            <div><label>Qtd. Times</label><input type="number" id="numTimes" value="2"></div>
+            <div><label>Jog. por Time</label><input type="number" id="porTime" value="5"></div>
         </div>
         <div class="action-row">
-            <button class="btn-sortear" onclick="sortear()">🎲 Sortear</button>
+            <button onclick="sortear()">🎲 Sortear</button>
             <button class="btn-danger" onclick="limparJogadores()">🗑️ Limpar</button>
         </div>
         <button class="btn-secondary" onclick="gerarTexto()">📋 Gerar Texto WhatsApp</button>
     </div>
 
-    <!-- LISTA -->
     <div class="card">
         <p class="card-title">Jogadores (<span id="totalJogadores">0</span>)</p>
         <div id="listaJogadores" class="lista-container"></div>
     </div>
 
-    <!-- RESULTADO -->
     <div class="card">
         <p class="card-title">Times Formados</p>
         <div id="times"></div>
     </div>
 </div>
 
-<!-- MODAL IMPORTAÇÃO -->
-<div id="modalImport" class="modal">
-    <div class="modal-content">
-        <h3>Colar Lista</h3>
-        <p style="font-size: 0.8rem; color: var(--text-muted); margin-bottom: 10px;">
-            Cole a lista do WhatsApp abaixo. Vamos limpar os números e emojis para você.
-        </p>
-        <textarea id="textoImportar" placeholder="Ex: 1. Batista..."></textarea>
-        <button class="btn-add" onclick="processarImportacao()">Importar Jogadores</button>
-        <button class="btn-secondary" onclick="fecharModalImport()">Cancelar</button>
-    </div>
-</div>
-
-<!-- MODAL COPIAR TEXTO -->
-<div id="modalTexto" class="modal">
-    <div class="modal-content">
-        <h3>Lista para Copiar</h3>
-        <textarea id="textoTimes" readonly></textarea>
-        <button class="btn-add" onclick="copiarTexto()">Copiar</button>
-        <button class="btn-secondary" onclick="fecharModalTexto()">Fechar</button>
-    </div>
-</div>
+<div id="modalImport" class="modal"><div class="modal-content"><h3>Colar Lista</h3><textarea id="textoImportar" style="height:100px"></textarea><button onclick="processarImportacao()">Importar</button><button class="btn-secondary" onclick="fecharModalImport()">Cancelar</button></div></div>
+<div id="modalTexto" class="modal"><div class="modal-content"><h3>Lista para Copiar</h3><textarea id="textoTimes" readonly style="height:150px"></textarea><button onclick="copiarTexto()">Copiar</button><button class="btn-secondary" onclick="fecharModalTexto()">Fechar</button></div></div>
 
 <script>
-    let jogadores = [];
-    let ultimoSorteio = [];
-
-    function toggleNivelSelect() {
-        const checkbox = document.getElementById("usarNivel");
-        const campo = document.getElementById("campoNivel");
-        campo.style.display = checkbox.checked ? "block" : "none";
-    }
-
-    function salvarJogadores() {
-        localStorage.setItem("jogadores", JSON.stringify(jogadores));
-    }
-
-    function carregarJogadores() {
-        const dados = localStorage.getItem("jogadores");
-        if (dados) jogadores = JSON.parse(dados);
-        renderJogadores();
-    }
+    let jogadores = []; let ultimoSorteio = [];
+    function toggleNivelSelect() { document.getElementById("campoNivel").style.display = document.getElementById("usarNivel").checked ? "block" : "none"; }
+    function salvarJogadores() { localStorage.setItem("jogadores", JSON.stringify(jogadores)); }
+    function carregarJogadores() { const d = localStorage.getItem("jogadores"); if (d) jogadores = JSON.parse(d); renderJogadores(); }
 
     function addJogador() {
         const nomeInput = document.getElementById("nome");
-        const nome = nomeInput.value.trim();
-        const usarNivel = document.getElementById("usarNivel").checked;
-        const nivel = usarNivel ? parseInt(document.getElementById("nivel").value) : 1;
-
-        if (!nome) return alert("Digite o nome.");
-        jogadores.push({ nome, nivel, nivelDefinido: usarNivel });
-        salvarJogadores();
-        nomeInput.value = "";
-        renderJogadores();
+        if (!nomeInput.value.trim()) return alert("Digite o nome.");
+        jogadores.push({ nome: nomeInput.value.trim(), nivel: document.getElementById("usarNivel").checked ? document.getElementById("nivel").value : 1 });
+        salvarJogadores(); nomeInput.value = ""; renderJogadores();
     }
 
-    // --- LÓGICA DE IMPORTAÇÃO ---
     function abrirModalImport() { document.getElementById("modalImport").style.display = "block"; }
     function fecharModalImport() { document.getElementById("modalImport").style.display = "none"; }
 
     function processarImportacao() {
-        const texto = document.getElementById("textoImportar").value;
-        if (!texto.trim()) return alert("Cole a lista primeiro!");
-
-        const linhas = texto.split('\n');
-        let contagem = 0;
-
-        linhas.forEach(linha => {
-            // Limpa números iniciais (1. 2.), emojis e textos entre parênteses
-            let nomeLimpo = linha
-                .replace(/^\d+[\s.)-]+/, '') // Remove "1. " ou "1- "
-                .replace(/\(.*\)/g, '')       // Remove tudo entre parênteses ex: (Dinheiro na mão)
-                .replace(/[^\w\sÀ-ÿ]/g, '')   // Remove emojis e caracteres especiais
-                .trim();
-
-            // Ignora linhas vazias ou o título "JOGADORES"
-            if (nomeLimpo && nomeLimpo.toUpperCase() !== "JOGADORES") {
-                jogadores.push({ nome: nomeLimpo, nivel: 1, nivelDefinido: false });
-                contagem++;
-            }
+        const t = document.getElementById("textoImportar").value.split('\n');
+        t.forEach(linha => {
+            let n = linha.replace(/^\d+[\s.)-]+/, '').replace(/\(.*\)/g, '').replace(/[^\w\sÀ-ÿ]/g, '').trim();
+            if (n && n.toUpperCase() !== "JOGADORES") jogadores.push({ nome: n, nivel: 1 });
         });
-
-        salvarJogadores();
-        renderJogadores();
-        document.getElementById("textoImportar").value = "";
-        fecharModalImport();
-        alert(contagem + " jogadores importados com sucesso!");
+        salvarJogadores(); renderJogadores(); fecharModalImport();
     }
 
-    function remover(i) {
-        jogadores.splice(i, 1);
-        salvarJogadores();
-        renderJogadores();
-    }
-
-    function limparJogadores() {
-        if (!confirm("Apagar tudo?")) return;
-        jogadores = [];
-        salvarJogadores();
-        renderJogadores();
-        document.getElementById("times").innerHTML = '';
-    }
+    function remover(i) { jogadores.splice(i, 1); salvarJogadores(); renderJogadores(); }
+    function limparJogadores() { if (!confirm("Apagar tudo?")) return; jogadores = []; salvarJogadores(); renderJogadores(); document.getElementById("times").innerHTML = ''; }
 
     function renderJogadores() {
-        const lista = document.getElementById("listaJogadores");
-        lista.innerHTML = "";
-        jogadores.forEach((j, i) => {
-            lista.innerHTML += `
-                <div class="jogador-item">
-                    <div><strong>${j.nome}</strong></div>
-                    <button class="btn-del" onclick="remover(${i})">✕</button>
-                </div>
-            `;
-        });
+        const lista = document.getElementById("listaJogadores"); lista.innerHTML = "";
+        jogadores.forEach((j, i) => { lista.innerHTML += `<div class="jogador-item"><div><strong>${j.nome}</strong></div><button class="btn-del" onclick="remover(${i})">✕</button></div>`; });
         document.getElementById("totalJogadores").innerText = jogadores.length;
     }
+
+    function shuffle(array) { for (let i = array.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [array[i], array[j]] = [array[j], array[i]]; } return array; }
 
     function sortear() {
         if (jogadores.length === 0) return alert("Adicione jogadores!");
         const numTimes = parseInt(document.getElementById("numTimes").value);
-        let lista = [...jogadores].sort(() => Math.random() - 0.5).sort((a, b) => b.nivel - a.nivel);
+        const porTime = parseInt(document.getElementById("porTime").value);
+        let lista = shuffle([...jogadores]);
         let times = Array.from({ length: numTimes }, () => []);
-
-        let i = 0, dir = 1;
-        lista.forEach(j => {
-            times[i].push(j);
-            i += dir;
-            if (i === numTimes) { dir = -1; i = numTimes - 1; }
-            else if (i < 0) { dir = 1; i = 0; }
-        });
-
-        ultimoSorteio = times;
-        renderTimes(times);
+        lista.forEach((j, i) => { let t = Math.floor(i / porTime); times[t < numTimes ? t : numTimes - 1].push(j); });
+        ultimoSorteio = times; renderTimes(times);
     }
 
     function renderTimes(times) {
-        const div = document.getElementById("times");
-        div.innerHTML = "";
-        times.forEach((t, i) => {
-            div.innerHTML += `<div class="time-box"><h3 style="color: var(--primary)">Time ${i+1}</h3>${t.map(j => `<p>• ${j.nome}</p>`).join("")}</div>`;
-        });
+        const div = document.getElementById("times"); div.innerHTML = "";
+        times.forEach((t, i) => { div.innerHTML += `<div class="time-box"><h3 style="color: var(--primary)">Time ${i+1}</h3>${t.map(j => `<p>• ${j.nome}</p>`).join("")}</div>`; });
     }
 
     function gerarTexto() {
         if (!ultimoSorteio.length) return alert("Sorteie primeiro!");
-        let txt = "⚽ *TIMES DO RACHA* ⚽\n\n";
-        ultimoSorteio.forEach((t, i) => {
-            txt += `*TIME ${i + 1}*\n`;
-            t.forEach(j => txt += `• ${j.nome}\n`);
-            txt += "\n";
-        });
-        document.getElementById("textoTimes").value = txt;
-        document.getElementById("modalTexto").style.display = "block";
+        let txt = "⚽ *TIMES DO SE SAIR ACABA FC* ⚽\n\n";
+        ultimoSorteio.forEach((t, i) => { txt += `*TIME ${i + 1}*\n`; t.forEach(j => txt += `• ${j.nome}\n`); txt += "\n"; });
+        document.getElementById("textoTimes").value = txt; document.getElementById("modalTexto").style.display = "block";
     }
 
-    function copiarTexto() {
-        const area = document.getElementById("textoTimes");
-        area.select();
-        document.execCommand("copy");
-        alert("Copiado!");
-    }
-
+    function copiarTexto() { document.getElementById("textoTimes").select(); document.execCommand("copy"); alert("Copiado!"); }
     function fecharModalTexto() { document.getElementById("modalTexto").style.display = "none"; }
-
     window.onload = carregarJogadores;
 </script>
 </body>
